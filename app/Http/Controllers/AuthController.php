@@ -41,8 +41,9 @@ class AuthController extends Controller
 
     public function signout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        Auth::logout();
+        // $request->user()->currentAccessToken()->delete();
+        // Auth::logout();
+        // $request->user()->logout();
 
         $request->session()->invalidate();
 
@@ -90,9 +91,15 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+
             $response = [
                 'message' => 'User authenticated',
-                'user' => Auth::user(),
+                'user' => [
+                    'name' => Auth::user()->name,
+                    'email' => Auth::user()->email,
+                    'created_at' => Auth::user()->created_at,
+                    'token' => $request->user()->createToken('shop')->plainTextToken,
+                ],
             ];
 
             return response()->json($response, 200);

@@ -24,6 +24,7 @@ Route::post('signin', [AuthController::class, 'signin'])->name('signin');
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductsController::class, 'index'])->name('products.index');
     Route::get('/search/{name}', [ProductsController::class, 'search'])->name('products.search');
+    Route::post('/search', [ProductsController::class, 'search'])->name('products.search');
     Route::get('/{product}', [ProductsController::class, 'show'])->name('products.show');
 });
 

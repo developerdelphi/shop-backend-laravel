@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrdersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductsController;
@@ -35,6 +36,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('products')->group(function () {
         Route::post('/create', [ProductsController::class, 'store'])->name('products.store');
         Route::put('/{product}', [ProductsController::class, 'update'])->name('products.update');
+    });
+
+    Route::prefix('orders')->group(function () {
+        //show only orders to authenticated user
+        Route::get('/user', [OrdersController::class, 'getByUser'])->name('orders.getByUser');
     });
 
     Route::get('/user', function (Request $request) {

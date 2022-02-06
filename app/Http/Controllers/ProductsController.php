@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductsRequest;
 use App\Http\Requests\UpdateProductsRequest;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
@@ -15,7 +16,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        return Product::with('category')->get();
     }
 
     /**
@@ -23,9 +24,19 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search($name)
+    public function search(Request $request, Product $product)
     {
-        return Product::where('name', 'like', '%'.$name.'%')->get();
+        // dd($request->input('slug'));
+        $product = $product->newQuery();
+        if ($request->has('slug'))
+            $product->where('slug', $request->input('slug'));
+
+        if ($request->has('name'))
+            $product->where('name', 'like', '%' . $request->input('name') . '%');
+
+        return $product->with(['category' => function ($query) {
+            $query->select(['id', 'name', 'slug']);
+        }])->select('id', 'name', 'slug', 'price', 'description', 'status', 'category_id')->get();
     }
 
     /**

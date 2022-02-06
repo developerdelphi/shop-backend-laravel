@@ -13,6 +13,8 @@ class ProductsSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Product::factory(25)->create();
+        // $categories = \App\Models\Category::
+        // \App\Models\Product::factory()->forCategory()->count(8)->create();
+        \App\Models\Product::factory(40)->create();
     }
 }

@@ -26,17 +26,26 @@ class ProductsController extends Controller
      */
     public function search(Request $request, Product $product)
     {
+        // dd('parada');
+
         // dd($request->input('slug'));
         $product = $product->newQuery();
-        if ($request->has('slug'))
-            $product->where('slug', $request->input('slug'));
 
-        if ($request->has('name'))
-            $product->where('name', 'like', '%' . $request->input('name') . '%');
+        if ($request->hasAny(['slug', 'name'])) {
+
+            if ($request->has('slug'))
+                $product->where('slug', $request->input('slug'));
+
+            if ($request->has('name'))
+                $product->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+        $product->whereIn('status', ['active']);
 
         return $product->with(['category' => function ($query) {
             $query->select(['id', 'name', 'slug']);
-        }])->select('id', 'name', 'slug', 'price', 'description', 'status', 'category_id')->get();
+        }])->select('id', 'name', 'slug', 'price', 'description', 'status', 'category_id')
+            ->orderBy('name')
+            ->cursorPaginate(5);
     }
 
     /**

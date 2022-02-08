@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,11 @@ class OrdersController extends Controller
      */
     public function getByUser(Order $order, Request $request)
     {
-        return $order->where('user_id', $request()->user()->id)->get();
+        return $order
+            ->select('id', 'created_at', 'status', 'total')
+            ->where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
     }
 
     /**
@@ -37,8 +42,13 @@ class OrdersController extends Controller
      */
     public function store(StoreOrderRequest $request, Order $order)
     {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+
+        // dd($user);
         $newOrder = $order->create([
-            'user_id' => $request()->user()->id,
+            'user_id' => $request->user()->id,
             'total' => $request->input('total'),
             'status' => 'open',
         ]);
@@ -46,8 +56,7 @@ class OrdersController extends Controller
         if ($newOrder) {
             return response()->json(['message' => 'Created Order', 'order' => $newOrder], 201);
         } else {
-
-            return response()->json(['message' => 'Not possible - create order'], 400);
+            return response()->json(['message' => 'Not possible - create order'], 500);
         }
     }
 

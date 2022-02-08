@@ -24,7 +24,7 @@ Route::post('signin', [AuthController::class, 'signin'])->name('signin');
 
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductsController::class, 'index'])->name('products.index');
-    Route::get('/search/{name}', [ProductsController::class, 'search'])->name('products.search');
+    Route::get('/search/{name?}', [ProductsController::class, 'search'])->name('products.search');
     Route::post('/search', [ProductsController::class, 'search'])->name('products.search');
     Route::get('/{product}', [ProductsController::class, 'show'])->name('products.show');
 });
@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('orders')->group(function () {
         //show only orders to authenticated user
         Route::get('/user', [OrdersController::class, 'getByUser'])->name('orders.getByUser');
+        Route::post('/', [OrdersController::class, 'store'])->name('orders.store');
     });
 
     Route::get('/user', function (Request $request) {

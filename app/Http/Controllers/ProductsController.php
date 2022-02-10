@@ -45,7 +45,7 @@ class ProductsController extends Controller
             $query->select(['id', 'name', 'slug']);
         }])->select('id', 'name', 'slug', 'price', 'description', 'status', 'category_id')
             ->orderBy('name')
-            ->cursorPaginate(5);
+            ->cursorPaginate(10);
     }
 
     /**
